@@ -4,8 +4,8 @@
 // ini_set('error_log','php.log');
 session_start();
 
-$great = array();
-// セリフクラス
+$great = array();// 偉人の変数に、配列を代入
+// クラス定数にて、偉人が言うセリフのクラスを作成。public function saySerif()にて、該当の偉人のセリフがランダムに出力されるように使用
 class Serif{
   const LINCOLN = 1;
   const MOUNTRUSHMORE = 2;
@@ -16,13 +16,14 @@ class Serif{
   const NIGHTINGALE = 7;
   const TAKIRENNTAROU = 8;
 }
-// 抽象クラス（人クラス）
+// プレイヤーの「学ぶ者」と、画面に出現する「偉人」の元となる抽象クラス「人クラス」
 abstract class Human{
   protected $name;
   protected $concentration;
   protected $studyMin;
   protected $studyMax;
-  abstract public function saySerif();
+  abstract public function saySerif(); // 「学ぶ者」と「偉人」でセリフが異なる。抽象メソッドを使用
+  // キャラクターの名前と、キャラクターの持つ集中力のセッターとゲッター
   public function setName($str){
     $this->name = $str;
   }
@@ -30,16 +31,17 @@ abstract class Human{
     return $this->name;
   }
   public function setConcentration($num){
-    $this->concentration = $num;
+    $this->concentration = filter_var($num, FILTER_VALIDATE_INT); // 小数ではなく、整数で入るようにチェック
   }
   public function getConcentration(){
     return $this->concentration;
   }
+  // 「学ぶ者」も「偉人」も、相手の集中力を奪う動作は同じなので、保守性のためpublic function study($targetObj)としてまとめ、相手を引数に入る情報によって変えられるようにしている
   public function study($targetObj){
     $studyPoint = mt_rand($this->studyMin, $this->studyMax);
     if(!mt_rand(0,9)){ //10分の1の確率でヒラメキ（攻撃力1.5倍）
       $studyPoint = $studyPoint * 1.5;
-      $studyPoint = (int)$studyPoint;
+      $studyPoint = (int)$studyPoint; // 1.5倍した数が小数の場合があるので、int型にキャストし整数にする
       History::set('なんと！'.$this->getName().'の天才的なヒラメキ！！（攻撃力1.5倍）');
     }
     $targetObj->setConcentration($targetObj->getConcentration()-$studyPoint);
@@ -48,7 +50,7 @@ abstract class Human{
 }
 // 学ぶ者クラス
 class Student extends Human{
-  public function __construct($name, $concentration, $studyMin, $studyMax) {
+  public function __construct($name, $concentration, $studyMin, $studyMax) { // プロパティの設定・初期化
     $this->name = $name;
     $this->concentration = $concentration;
     $this->studyMin = $studyMin;
@@ -60,8 +62,8 @@ class Student extends Human{
 }
 // 偉人クラス
 class Great extends Human{
-  protected $img;
-  public function __construct($name, $serif, $concentration, $img, $studyMin, $studyMax) {
+  protected $img; // 「偉人クラス」のみ画像を使うので、プロパティを追加
+  public function __construct($name, $serif, $concentration, $img, $studyMin, $studyMax) { // プロパティの設定・初期化
     $this->name = $name;
     $this->serif = $serif;
     $this->concentration = $concentration;
@@ -70,14 +72,8 @@ class Great extends Human{
     $this->studyMin = $studyMin;
     $this->studyMax = $studyMax;
   }
-  public function setSerif($num){
-    $this->serif = $num;
-  }
-  public function getSerif(){
-    return $this->serif;
-  }
 
-  public function saySerif(){
+  public function saySerif(){ //各偉人に応じて、セリフをランダムに生成
     switch($this->serif){
       case Serif::LINCOLN :
         $serif_rand = array(
@@ -177,9 +173,9 @@ class Great extends Human{
     return $this->img;
   }
 }
-// 本気を出した偉人クラス（アルキメデスと、ラッシュモアのみ）
+// パワーアップした、特別な偉人「本気を出した偉人クラス（アルキメデスと、ラッシュモアのみ）」
 class SeriousGreat extends Great{
-  private $seriousStudy;
+  private $seriousStudy; // これ以上継承しないので、アクセス権はprivate
   function __construct($name, $serif, $concentration, $img, $studyMin, $studyMax, $seriousStudy) {
     parent::__construct($name, $serif, $concentration, $img, $studyMin, $studyMax);
     $this->seriousStudy = $seriousStudy;
@@ -225,24 +221,24 @@ $greats[] = new Great( '【理】ガリレオ・ガリレイ', Serif::GALILEO, 1
 $greats[] = new Great( '【社】ナイチン・ゲール', Serif::NIGHTINGALE, 120, 'img/nightingale.png', 20, 30 );
 $greats[] = new Great( '【音楽】滝廉太郎', Serif::TAKIRENNTAROU, 180, 'img/taki_rentarou.png', 30, 50 );
 
-function createGreat(){
+function createGreat(){ // 偉人作成関数
   global $greats;
   $great =  $greats[mt_rand(0, 7)];
   History::set('>>> 偉人が現れた！<br>'.$great->getName().'が何かを伝えようとしている！');
   $_SESSION['great'] =  $great;
 }
-function createStudent(){
+function createStudent(){ // 学ぶ者作成関数
   global $student;
-  $_SESSION['student'] =  $student;
+  $_SESSION['student'] = $student;
 }
-function init(){
+function init(){ // ゲーム初期化関数
   History::clear();
   History::set(' >>>>>>>>>> はじめ！<<<<<<<<<< <br>');
   $_SESSION['understandingCount'] = 0;
   createStudent();
   createGreat();
 }
-function restBreak(){
+function gameOver(){
   $_SESSION = array();
 }
 
@@ -272,7 +268,7 @@ if(!empty($_POST)){
 
       // 自分の集中力が0以下になったら終了
       if($_SESSION['student']->getConcentration() <= 0){
-        header("Location:result.php"); //結果ページへ
+        header("Location:result.php"); // 結果ページへ
         exit;
       }else{
         // 偉人の集中力が0以下になったら、別の偉人が現れる
@@ -287,7 +283,7 @@ if(!empty($_POST)){
       createGreat();
     }
   }
-  $_POST = array();
+  $_POST = array(); // POST変数初期化。ブラウザの戻る進むによるPOSTデータ再送信の誤作動防止
 }
 
 ?>
@@ -297,8 +293,7 @@ if(!empty($_POST)){
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <meta property="og:url" content="">
+  <meta property="og:url" content="https://ijinden.idoharu.com">
   <meta property="og:title" content="偉人伝">
   <meta property="og:description" content="歴史上の偉人から学び取って、倒しまくろう！">
   <meta property="og:image" content="img/greats.png">
@@ -315,7 +310,7 @@ if(!empty($_POST)){
           <div class="start__img">
             <img src="img/greats.png" alt="">
           </div>
-          <form method="post" style="margin-bottom:10px;">
+          <form method="post">
             <input class="post--start" type="submit" name="start" value="▶学びを始める！">
           </form>
           <div class="start__text">
