@@ -36,7 +36,7 @@ abstract class Human{
   public function getConcentration(){
     return $this->concentration;
   }
-  // 「学ぶ者」も「偉人」も、相手の集中力を奪う動作は同じなので、保守性のためpublic function study($targetObj)としてまとめ、相手を引数に入る情報によって変えられるようにしている
+  // 「学ぶ者」も「偉人」も、相手の集中力を奪う動作は同じなので、保守性のためpublic function study($targetObj)としてまとめている
   public function study($targetObj){
     $studyPoint = mt_rand($this->studyMin, $this->studyMax);
     if(!mt_rand(0,9)){ //10分の1の確率でヒラメキ（攻撃力1.5倍）
@@ -44,7 +44,7 @@ abstract class Human{
       $studyPoint = (int)$studyPoint; // 1.5倍した数が小数の場合があるので、int型にキャストし整数にする
       History::set('なんと！'.$this->getName().'の天才的なヒラメキ！！（攻撃力1.5倍）');
     }
-    $targetObj->setConcentration($targetObj->getConcentration()-$studyPoint);
+    $targetObj->setConcentration($targetObj->getConcentration()-$studyPoint); // 引数に入る情報によって、相手を変えられるように
     History::set($studyPoint.'ポイントのダメージ！');
   }
 }
