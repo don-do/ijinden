@@ -295,7 +295,7 @@ body {
   background-position: left bottom;
 }
 
-@media (min-width: 767px) and (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .wrapper {
     width: 100%;
     margin: 0;
@@ -809,7 +809,7 @@ body {
   line-height: 15px;
 }
 
-@media (min-width: 767px) and (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .footer {
     width: 100%;
     margin: 0;
@@ -844,7 +844,7 @@ body {
   background-repeat: no-repeat;
 }
 
-@media (min-width: 767px) and (max-width: 1024px) {
+@media (min-width: 768px) and (max-width: 1024px) {
   .result {
     width: 100%;
     margin: 0;
