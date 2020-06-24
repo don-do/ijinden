@@ -300,7 +300,7 @@ if(!empty($_POST)){
   <title>偉人伝</title>
   <link href="https://fonts.googleapis.com/css?family=Kosugi+Maru|Paytone+One&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="shortcut icon" href="img/lincoln.png" type="image/png">
+  <link rel="icon" href="img/lincoln.png" type="image/png">
 </head>
 <body>
   <div class="wrapper">
