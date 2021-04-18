@@ -371,7 +371,7 @@ if(!empty($_POST)){
     <?php } ?>
   </div>
   <footer class="footer">
-    <p>Copyright © <a href="https://idoharu.com">idoharu.com</a>. All Rights Reserved</p>
+    <p>Copyright © <a href="https://don-do.com">don-do.com</a>. All Rights Reserved</p>
   </footer>
 
   <script src="js/jquery-3.4.1.min.js"></script>
